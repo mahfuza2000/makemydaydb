@@ -88,6 +88,21 @@ export default function ItemModal() {
       setImageUri(result.assets[0].uri);
     }
   };
+  const handlePickImagefromCamera = async () => {
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+    if (permissionResult.granted === false) {
+      alert("Camera access is required to take pictures.");
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 0.5,
+    });
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
 
   //mss  
   const handleSave = async () => {
@@ -271,7 +286,7 @@ export default function ItemModal() {
             <Text style={styles.buttonText}>Select Picture</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={handlePickImage}
+            onPress={handlePickImagefromCamera}
             style={[styles.button, { backgroundColor: "green" }]}
           >
             <Text style={styles.buttonText}>Take Picture</Text>
