@@ -1,39 +1,92 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { Stack } from "expo-router";
+import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
+import { StatusBar } from "expo-status-bar";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+//mss
+import React from "react";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+
+const createDbIfNeeded = async (db: SQLiteDatabase) => {
+  //
+  console.log("Creating database");
+  try {
+    // Create a table
+    // const response = await db.execAsync(
+    //   "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, image TEXT)"
+    // );
+    //mss
+    const response = await db.execAsync(
+      `CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        category TEXT,
+        name TEXT,
+        image TEXT,
+        season TEXT,
+        color TEXT
+      )`
+    );
+    console.log("Database created", response);
+  } catch (error) {
+    console.error("Error creating database:", error);
+  }
+};
+
+
+// // Function to delete the old database (test.db)
+// const deleteOldDatabase = async () => {
+//   const dbPath = `${FileSystem.documentDirectory}SQLite/test.db`;
+//   try {
+//     const fileInfo = await FileSystem.getInfoAsync(dbPath);
+//     if (fileInfo.exists) {
+//       await FileSystem.deleteAsync(dbPath, { idempotent: true });
+//       console.log("Deleted old database: test.db");
+//     } else {
+//       console.log("Old database test.db does not exist.");
+//     }
+//   } catch (error) {
+//     console.error("Error deleting old database:", error);
+//   }
+// };
+
+// // Create or migrate the new database (mmd.db)
+// const createDbIfNeeded = async (db: SQLiteDatabase) => {
+//   console.log("Creating new database mmd.db");
+//   try {
+//     const response = await db.execAsync(
+//       `CREATE TABLE IF NOT EXISTS users (
+//         id INTEGER PRIMARY KEY AUTOINCREMENT,
+//         category TEXT,
+//         name TEXT,
+//         image TEXT,
+//         season TEXT,
+//         color TEXT
+//       )`
+//     );
+//     console.log("New database created", response);
+//   } catch (error) {
+//     console.error("Error creating database:", error);
+//   }
+// };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
+  // React.useEffect(() => {
+  //   deleteOldDatabase();
+  // }, []);
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+    <>
+      <SQLiteProvider databaseName="new.db" onInit={createDbIfNeeded}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+          <Stack.Screen
+            name="modal"
+            options={{
+              presentation: "modal",
+            }}
+          />
+        </Stack>
+      </SQLiteProvider>
       <StatusBar style="auto" />
-    </ThemeProvider>
+    </>
   );
 }
