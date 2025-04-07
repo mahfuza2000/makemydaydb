@@ -1,5 +1,5 @@
 import { router, Stack, useFocusEffect } from "expo-router";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -7,24 +7,62 @@ import {
   FlatList,
   StyleSheet,
   Image,
+  Modal,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useSQLiteContext } from "expo-sqlite";
-
-//mss
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import DropDownPicker from "react-native-dropdown-picker";
 
 export default function TabHome() {
-  const [data, setData] = React.useState<
-    { id: number; category: string; name: string; image: string; season: string; color: string }[]
-  >([]);
+  const [data, setData] = useState([]);
+  const [showFilters, setShowFilters] = useState(false);
+
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [categoryValue, setCategoryValue] = useState("All");
+  const [categoryItems, setCategoryItems] = useState([
+    { label: "All Categories", value: "All" },
+    { label: "Shirt", value: "Shirt" },
+    { label: "Pants", value: "Pants" },
+    { label: "Dress", value: "Dress" },
+    { label: "Outerwear", value: "Outerwear" },
+    { label: "Shoes", value: "Shoes" },
+    { label: "Accessories", value: "Accessories" },
+    { label: "Hats", value: "Hats" },
+    { label: "Miscellaneous", value: "Miscellaneous" },
+  ]);
+
+  const [colorOpen, setColorOpen] = useState(false);
+  const [colorValue, setColorValue] = useState("All");
+  const [colorItems, setColorItems] = useState([
+    { label: "All Colors", value: "All" },
+    { label: "Red", value: "Red" },
+    { label: "Blue", value: "Blue" },
+    { label: "Green", value: "Green" },
+    { label: "Black", value: "Black" },
+    { label: "White", value: "White" },
+    { label: "Yellow", value: "Yellow" },
+    { label: "Purple", value: "Purple" },
+    { label: "Orange", value: "Orange" },
+  ]);
+
+  const [seasonOpen, setSeasonOpen] = useState(false);
+  const [seasonValue, setSeasonValue] = useState("All");
+  const [seasonItems, setSeasonItems] = useState([
+    { label: "All Seasons", value: "All" },
+    { label: "Summer", value: "Summer" },
+    { label: "Fall", value: "Fall" },
+    { label: "Winter", value: "Winter" },
+    { label: "Spring", value: "Spring" },
+  ]);
+
   const database = useSQLiteContext();
 
   useFocusEffect(
     useCallback(() => {
-      loadData(); // Fetch data when the screen is focused
-    }, [])
+      loadData();
+    }, [categoryValue, colorValue, seasonValue])
   );
 
   const headerRight = () => (
@@ -37,42 +75,43 @@ export default function TabHome() {
   );
 
   const loadData = async () => {
-    const result = await database.getAllAsync<{
-      id: number;
-      category: string;
-      name: string;
-      image: string;
-      season: string;
-      color: string;
-    }>("SELECT * FROM users");
+    let query = "SELECT * FROM users WHERE 1=1";
+    const params = [];
+
+    if (categoryValue !== "All") {
+      query += " AND category = ?";
+      params.push(categoryValue);
+    }
+    if (colorValue !== "All") {
+      query += " AND color = ?";
+      params.push(colorValue);
+    }
+    if (seasonValue !== "All") {
+      query += " AND season = ?";
+      params.push(seasonValue);
+    }
+
+    const result = await database.getAllAsync(query, params);
     setData(result);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id) => {
     try {
-      const response = await database.runAsync(
-        `DELETE FROM users WHERE id = ?`,
-        [id]
-      );
-      console.log("Item deleted successfully:", response?.changes!);
-      loadData(); // Refresh data after deletion
+      await database.runAsync("DELETE FROM users WHERE id = ?", [id]);
+      loadData();
     } catch (error) {
       console.error("Error deleting item:", error);
     }
   };
 
-  //mss
   const exportDatabase = async () => {
     try {
       const dbPath = `${FileSystem.documentDirectory}SQLite/new.db`;
-  
       const fileInfo = await FileSystem.getInfoAsync(dbPath);
       if (!fileInfo.exists) {
         alert("Database file not found!");
         return;
       }
-  
-      // Share the DB file (email, airdrop, etc.)
       await Sharing.shareAsync(dbPath);
     } catch (error) {
       console.error("Error exporting DB:", error);
@@ -80,130 +119,146 @@ export default function TabHome() {
     }
   };
 
+  const clearFilters = () => {
+    setCategoryValue("All");
+    setColorValue("All");
+    setSeasonValue("All");
+    setShowFilters(false);
+  };
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Stack.Screen options={{ headerRight }} />
-      <View>
-        <FlatList
-          data={data}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({
-            item,
-          }: {
-            item: { id: number; category: string; name: string; image: string; season: string; color: string };
-          }) => (
-            <View style={styles.itemContainer}>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                {/* ✅ Show image if it exists */}
-                {item.image ? (
-                  <Image
-                    source={{ uri: item.image }}
-                    style={styles.image}
-                  />
-                ) : (
-                  <View style={styles.placeholderImage}>
-                    <Text>❌</Text>
-                  </View>
-                )}
-                <View style={{ marginLeft: 10 }}>
-                  <Text>{item.name}</Text>
-                  <Text>{item.category}</Text>
-                </View>
-              </View>
 
-              <View style={styles.buttonGroup}>
-                <TouchableOpacity
-                  onPress={() => router.push(`/modal?id=${item.id}`)}
-                  style={styles.button}
-                >
-                  <Text style={styles.buttonText}>Edit</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => handleDelete(item.id)}
-                  style={[styles.button, { backgroundColor: "red" }]}
-                >
-                  <Text style={styles.buttonText}>Delete</Text>
-                </TouchableOpacity>
+      <View style={{ paddingHorizontal: 10, marginTop: 10, alignItems: "flex-end" }}>
+        <TouchableOpacity
+          onPress={() => setShowFilters(true)}
+          style={styles.filterButton}
+        >
+          <Text style={styles.filterButtonText}>Filter By</Text>
+        </TouchableOpacity>
+      </View>
+
+      <FlatList
+        contentContainerStyle={{ paddingBottom: 140 }}
+        data={data}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.itemContainer}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {item.image ? (
+                <Image source={{ uri: item.image }} style={styles.image} />
+              ) : (
+                <View style={styles.placeholderImage}>
+                  <Text>❌</Text>
+                </View>
+              )}
+              <View style={{ marginLeft: 10 }}>
+                <Text>{item.name}</Text>
+                <Text>{item.category}</Text>
               </View>
             </View>
-          )}
-        />
-      </View>
-      {/* mss */}
-      <TouchableOpacity
-        onPress={exportDatabase}
-        style={{
-          margin: 20,
-          padding: 10,
-          backgroundColor: "green",
-          borderRadius: 5,
-          alignItems: "center",
-        }}
-      >
-        <Text style={{ color: "white", fontWeight: "bold" }}>Export DB</Text>
-      </TouchableOpacity>
-      {/* <TouchableOpacity
-  onPress={deleteDatabase}
-  style={{ backgroundColor: "darkred", padding: 10, margin: 10 }}
->
-  <Text style={{ color: "white", fontWeight: "bold" }}>Delete Database</Text>
-</TouchableOpacity> */}
 
+            <View style={styles.buttonGroup}>
+              <TouchableOpacity
+                onPress={() => router.push(`/modal?id=${item.id}`)}
+                style={[styles.button, { backgroundColor: "blue" }]}
+              >
+                <Text style={styles.buttonText}>Edit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleDelete(item.id)}
+                style={[styles.button, { backgroundColor: "red" }]}
+              >
+                <Text style={styles.buttonText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      />
+
+      <View style={styles.bottomButtons}>
+        <TouchableOpacity onPress={exportDatabase} style={styles.exportButton}>
+          <Text style={styles.buttonText}>Export DB</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/roll")} style={styles.rollButton}>
+          <Text style={styles.buttonText}>Roll!</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Modal
+        visible={showFilters}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowFilters(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+              <Text style={styles.modalTitle}>Filter Items</Text>
+              <TouchableOpacity onPress={clearFilters}>
+                <Text style={{ color: "red", fontWeight: "bold" }}>Clear</Text>
+              </TouchableOpacity>
+            </View>
+
+            <DropDownPicker
+              open={categoryOpen}
+              value={categoryValue}
+              items={categoryItems}
+              setOpen={setCategoryOpen}
+              setValue={(callback) => setCategoryValue(callback())}
+              setItems={setCategoryItems}
+              placeholder="Select Category"
+              zIndex={3000}
+              zIndexInverse={1000}
+              style={{ marginBottom: categoryOpen ? 180 : 10 }}
+            />
+
+            <DropDownPicker
+              open={colorOpen}
+              value={colorValue}
+              items={colorItems}
+              setOpen={setColorOpen}
+              setValue={(callback) => setColorValue(callback())}
+              setItems={setColorItems}
+              placeholder="Select Color"
+              zIndex={2000}
+              zIndexInverse={2000}
+              style={{ marginBottom: colorOpen ? 180 : 10 }}
+            />
+
+            <DropDownPicker
+              open={seasonOpen}
+              value={seasonValue}
+              items={seasonItems}
+              setOpen={setSeasonOpen}
+              setValue={(callback) => setSeasonValue(callback())}
+              setItems={setSeasonItems}
+              placeholder="Select Season"
+              zIndex={1000}
+              zIndexInverse={3000}
+              style={{ marginBottom: seasonOpen ? 180 : 10 }}
+            />
+
+            <View style={{ flexDirection: "row", gap: 10, marginTop: 20 }}>
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: "gray", flex: 1 }]}
+                onPress={() => setShowFilters(false)}
+              >
+                <Text style={styles.buttonText}>Close</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: "blue", flex: 1 }]}
+                onPress={() => setShowFilters(false)}
+              >
+                <Text style={styles.buttonText}>Apply</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
-
-  //   <View>
-  //     <Stack.Screen options={{ headerRight }} />
-  //     <View>
-  //       <FlatList
-  //         data={data}
-  //         renderItem={({
-  //           item,
-  //         }: {
-  //           item: { id: number; name: string; email: string; image: string };
-  //         }) => (
-  //           <View style={{ padding: 10 }}>
-  //             <View
-  //               style={{
-  //                 flexDirection: "row",
-  //                 justifyContent: "space-between",
-  //               }}
-  //             >
-  //               <View>
-  //                 <Text>{item.name}</Text>
-  //                 <Text>{item.email}</Text>
-  //               </View>
-  //               <View
-  //                 style={{
-  //                   flexDirection: "row",
-  //                   gap: 10,
-  //                 }}>
-  //                 <TouchableOpacity
-  //                   onPress={() => {
-  //                     router.push(`/modal?id=${item.id}`);
-  //                   }}
-  //                   style={styles.button}
-  //                 >
-  //                   <Text style={styles.buttonText}>Edit</Text>
-  //                 </TouchableOpacity>
-  //                 <TouchableOpacity
-  //                   onPress={() => {
-  //                     handleDelete(item.id);
-  //                     //loadData(); // Refresh data after deletion
-  //                   }}
-  //                   style={[styles.button, {backgroundColor: "red"}]}
-  //                 >
-  //                   <Text style={styles.buttonText}>Delete</Text>
-  //                 </TouchableOpacity>
-  //                 </View>
-  //             </View>
-  //           </View>
-  //         )}
-  //       />
-  //     </View>
-  //   </View>
-  // );
 }
 
 const styles = StyleSheet.create({
@@ -233,16 +288,69 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   button: {
-    height: 30,
-    width: 60,
-    alignItems: "center",
-    justifyContent: "center",
+    height: 40,
     borderRadius: 5,
-    backgroundColor: "blue",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 10,
   },
   buttonText: {
-    fontSize: 12,
-    fontWeight: "bold",
     color: "white",
+    fontWeight: "bold",
+  },
+  filterButton: {
+    backgroundColor: "#007bff",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    alignSelf: "flex-end",
+  },
+  filterButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  bottomButtons: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 10,
+  },
+  exportButton: {
+    flex: 1,
+    backgroundColor: "green",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  rollButton: {
+    flex: 1,
+    backgroundColor: "blue",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  modalLabel: {
+    marginTop: 10,
+    fontWeight: "600",
   },
 });
