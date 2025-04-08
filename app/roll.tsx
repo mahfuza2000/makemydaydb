@@ -166,17 +166,17 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
   },
   optionSelected: {
-    backgroundColor: "blue",
+    backgroundColor: "cornflowerblue",
   },
   optionText: {
-    color: "black",
+    color: "dimgray",
   },
   optionTextSelected: {
     color: "white",
-    fontWeight: "bold",
+    fontWeight: "normal",
   },
   rollButton: {
-    backgroundColor: "blue",
+    backgroundColor: "royalblue",
     padding: 15,
     borderRadius: 10,
     marginTop: 20,

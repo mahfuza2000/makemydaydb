@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   },
   outfitCard: {
     padding: 15,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "lightgray",
     borderRadius: 10,
     marginBottom: 15,
   },
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   deleteButton: {
-    color: "red",
+    color: "royalblue",
     fontWeight: "bold",
   }  
 });

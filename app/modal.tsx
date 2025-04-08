@@ -172,7 +172,7 @@ export default function ItemModal() {
         <View
           style={{
             gap: 20,
-            marginVertical: 20,
+            margin: 15,
           }}
         >
           {/* <TextInput
@@ -182,6 +182,17 @@ export default function ItemModal() {
             onChangeText={(text) => setCategory(text)}
             style={styles.textInput}
           /> */}
+
+          <View style={styles.categoryContainer}>
+            <Text style={styles.label}>Enter Name:</Text>
+            <TextInput
+              placeholder="Name"
+              placeholderTextColor={"black"}
+              value={name}
+              onChangeText={(text) => setName(text)}
+              style={styles.textInput}
+            />
+          </View>
 
           <View style={styles.categoryContainer}>
             <Text style={styles.label}>Select Category:</Text>
@@ -208,13 +219,6 @@ export default function ItemModal() {
             </View>
           </View>
 
-          <TextInput
-            placeholder="Name"
-            placeholderTextColor={"black"}
-            value={name}
-            onChangeText={(text) => setName(text)}
-            style={styles.textInput}
-          />
           {/* <TextInput
             placeholder="Season"
             placeholderTextColor={"black"}
@@ -281,13 +285,13 @@ export default function ItemModal() {
           <View style={{flexDirection: "row" , gap: 20, marginTop: 20}}>
               <TouchableOpacity
             onPress={handlePickImage}
-            style={[styles.button, { backgroundColor: "green" }]}
+            style={[styles.button, { backgroundColor: "royalblue" }]}
           >
             <Text style={styles.buttonText}>Select Picture</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handlePickImagefromCamera}
-            style={[styles.button, { backgroundColor: "green" }]}
+            style={[styles.button, { backgroundColor: "royalblue" }]}
           >
             <Text style={styles.buttonText}>Take Picture</Text>
           </TouchableOpacity>
@@ -300,10 +304,10 @@ export default function ItemModal() {
           ) : null}
         </View>
       </ScrollView>
-      <View style={{ flexDirection: "row", gap: 20 }}>
+      <View style={{ flexDirection: "row", gap: 20, margin: 15 }}>
         <TouchableOpacity
           onPress={() => router.back()}
-          style={[styles.button, { backgroundColor: "red" }]}
+          style={[styles.button, { backgroundColor: "cornflowerblue" }]}
         >
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
@@ -311,7 +315,7 @@ export default function ItemModal() {
           onPress={async () => {
             editMode ? handleUpdate() : handleSave();
           }}
-          style={[styles.button, { backgroundColor: "blue" }]}
+          style={[styles.button, { backgroundColor: "royalblue" }]}
         >
           <Text style={styles.buttonText}>{editMode ? "Update" : "Save"}</Text>
         </TouchableOpacity>
@@ -333,7 +337,7 @@ const styles = StyleSheet.create({
     padding: 10,
     width: 300,
     borderRadius: 5,
-    borderColor: "slategray",
+    borderColor: "#ccc",
   },
   button: {
     height: 40,
@@ -347,8 +351,8 @@ const styles = StyleSheet.create({
     color: "white",
   },
   selectedSeason: {
-    backgroundColor: "#4CAF50",
-    borderColor: "#4CAF50",
+    backgroundColor: "cornflowerblue",
+    borderColor: "#ccc",
   },
   seasonButtonText: {
     fontSize: 16,
@@ -394,8 +398,8 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
   },
   selectedColor: {
-    backgroundColor: "#4CAF50",
-    borderColor: "#4CAF50",
+    backgroundColor: "cornflowerblue",
+    borderColor: "#ccc",
   },
   colorButtonText: {
     fontSize: 16,
@@ -428,8 +432,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   selectedCategory: {
-    backgroundColor: "#4CAF50",
-    borderColor: "#4CAF50",
+    backgroundColor: "cornflowerblue",
+    borderColor: "#ccc",
   },
   categoryButtonText: {
     fontSize: 16,
