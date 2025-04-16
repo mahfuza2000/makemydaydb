@@ -10,10 +10,16 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+2. Start the app (Host computer and Mobile device must be on same network)
 
    ```bash
     npx expo start
+   ```
+
+If on different networks, you must use tunneling. To enable tunneling, you must first make sure @expo/ngrok is installed within your packages.
+To get a tunneled URL, pass the --tunnel flag to npx expo start from the command line.
+   ```bash
+    npx expo start --tunnel
    ```
 
 In the output, you'll find options to open the app in a
