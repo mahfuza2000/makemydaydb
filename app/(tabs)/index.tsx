@@ -70,7 +70,7 @@ export default function TabHome() {
       onPress={() => router.push("/modal")}
       style={{ marginRight: 10 }}
     >
-      <FontAwesome name="plus-circle" size={28} color="blue" />
+      <FontAwesome name="plus-circle" size={32} color="royalblue" />
     </TouchableOpacity>
   );
 
@@ -162,13 +162,13 @@ export default function TabHome() {
             <View style={styles.buttonGroup}>
               <TouchableOpacity
                 onPress={() => router.push(`/modal?id=${item.id}`)}
-                style={[styles.button, { backgroundColor: "blue" }]}
+                style={[styles.button, { backgroundColor: "royalblue" }]}
               >
                 <Text style={styles.buttonText}>Edit</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => handleDelete(item.id)}
-                style={[styles.button, { backgroundColor: "red" }]}
+                style={[styles.button, { backgroundColor: "cornflowerblue" }]}
               >
                 <Text style={styles.buttonText}>Delete</Text>
               </TouchableOpacity>
@@ -197,7 +197,7 @@ export default function TabHome() {
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
               <Text style={styles.modalTitle}>Filter Items</Text>
               <TouchableOpacity onPress={clearFilters}>
-                <Text style={{ color: "red", fontWeight: "bold" }}>Clear</Text>
+                <Text style={{ color: "royalblue", fontWeight: "bold" }}>Clear</Text>
               </TouchableOpacity>
             </View>
 
@@ -211,7 +211,7 @@ export default function TabHome() {
               placeholder="Select Category"
               zIndex={3000}
               zIndexInverse={1000}
-              style={{ marginBottom: categoryOpen ? 180 : 10 }}
+              style={[styles.dropDown, { marginTop: categoryOpen ? 215 : 10 }]}
             />
 
             <DropDownPicker
@@ -224,7 +224,7 @@ export default function TabHome() {
               placeholder="Select Color"
               zIndex={2000}
               zIndexInverse={2000}
-              style={{ marginBottom: colorOpen ? 180 : 10 }}
+              style={[styles.dropDown, { marginTop: colorOpen ? 210 : 10 }]}
             />
 
             <DropDownPicker
@@ -237,18 +237,18 @@ export default function TabHome() {
               placeholder="Select Season"
               zIndex={1000}
               zIndexInverse={3000}
-              style={{ marginBottom: seasonOpen ? 180 : 10 }}
+              style={[styles.dropDown, { marginTop: seasonOpen ? 210 : 10 }]}
             />
 
             <View style={{ flexDirection: "row", gap: 10, marginTop: 20 }}>
               <TouchableOpacity
-                style={[styles.button, { backgroundColor: "gray", flex: 1 }]}
+                style={[styles.button, { backgroundColor: "cornflowerblue", flex: 1 }]}
                 onPress={() => setShowFilters(false)}
               >
                 <Text style={styles.buttonText}>Close</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.button, { backgroundColor: "blue", flex: 1 }]}
+                style={[styles.button, { backgroundColor: "royalblue", flex: 1 }]}
                 onPress={() => setShowFilters(false)}
               >
                 <Text style={styles.buttonText}>Apply</Text>
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   filterButton: {
-    backgroundColor: "#007bff",
+    backgroundColor: "cornflowerblue",
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 8,
@@ -321,14 +321,14 @@ const styles = StyleSheet.create({
   },
   exportButton: {
     flex: 1,
-    backgroundColor: "green",
+    backgroundColor: "cornflowerblue",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
   },
   rollButton: {
     flex: 1,
-    backgroundColor: "blue",
+    backgroundColor: "royalblue",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
@@ -353,4 +353,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontWeight: "600",
   },
+  dropDown: {
+    borderColor: "#ccc",
+  }
 });

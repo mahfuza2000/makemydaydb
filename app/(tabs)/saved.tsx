@@ -1,113 +1,109 @@
-import { router, Stack, useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   FlatList,
   StyleSheet,
-  Image,
-  Alert,
+  TouchableOpacity,
 } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useSQLiteContext } from "expo-sqlite";
+import { useFocusEffect } from "expo-router";
 
-export default function SavedOutfits() {
-  const [outfits, setOutfits] = useState([]);
-  const database = useSQLiteContext();
+export default function SavedOutfitsTab() {
+  const db = useSQLiteContext();
+  const [outfits, setOutfits] = useState<
+    { id: number; name: string; items: any[] }[]
+  >([]);
 
   useFocusEffect(
     useCallback(() => {
-      loadOutfits();
+      loadSavedOutfits();
     }, [])
   );
 
-  const loadOutfits = async () => {
-    const result = await database.getAllAsync(
-      `CREATE TABLE IF NOT EXISTS saved_outfits (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, items TEXT)`
-    );
-    const data = await database.getAllAsync(`SELECT * FROM saved_outfits`);
-    setOutfits(data);
-  };
-
-  const handleDelete = async (id) => {
-    await database.runAsync(`DELETE FROM saved_outfits WHERE id = ?`, [id]);
-    loadOutfits();
-  };
-
-  const handleRandomRoll = async () => {
-    const allOutfits = await database.getAllAsync(`SELECT * FROM saved_outfits ORDER BY RANDOM() LIMIT 1`);
-    if (allOutfits.length > 0) {
-      const selectedOutfit = allOutfits[0];
-      const outfitItems = JSON.parse(selectedOutfit.items);
-      Alert.alert(
-        "Your Random Outfit:",
-        `${selectedOutfit.name}\n\n` + outfitItems.map((item) => `${item.category}: ${item.name}`).join("\n"),
-        [{ text: "Close", style: "cancel" }]
+  const loadSavedOutfits = async () => {
+    try {
+      await db.runAsync(
+        `CREATE TABLE IF NOT EXISTS saved_outfits (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, items TEXT)`
       );
-    } else {
-      Alert.alert("No outfits saved yet");
+
+      const result = await db.getAllAsync<{
+        id: number;
+        name: string;
+        items: string;
+      }>(`SELECT * FROM saved_outfits`);
+
+      const parsed = result.map((row) => ({
+        id: row.id,
+        name: row.name,
+        items: JSON.parse(row.items),
+      }));
+
+      setOutfits(parsed);
+    } catch (error) {
+      console.error("Error loading saved outfits:", error);
+    }
+  };
+  
+  const handleDeleteOutfit = async (id: number) => {
+    try {
+      await db.runAsync(`DELETE FROM saved_outfits WHERE id = ?`, [id]);
+      loadSavedOutfits();
+    } catch (error) {
+      console.error("Error deleting outfit:", error);
     }
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <Stack.Screen options={{ title: "Saved Outfits" }} />
+    <View style={{ flex: 1, padding: 20 }}>
+      <Text style={styles.header}>Saved Outfits</Text>
 
-      <TouchableOpacity
-        onPress={handleRandomRoll}
-        style={{
-          backgroundColor: "royalblue",
-          padding: 15,
-          borderRadius: 10,
-          margin: 15,
-          alignItems: "center",
-        }}
-      >
-        <Text style={{ color: "white", fontWeight: "bold" }}>Need Help Deciding?</Text>
-      </TouchableOpacity>
-
-      <FlatList
-        data={outfits}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={{ paddingBottom: 50 }}
-        renderItem={({ item }) => (
-          <View style={styles.outfitCard}>
-            <Text style={styles.outfitName}>{item.name}</Text>
-            {JSON.parse(item.items).map((piece, index) => (
-              <Text key={index}>{piece.category}: {piece.name}</Text>
+      {outfits.length === 0 ? (
+        <Text>No outfits saved yet.</Text>
+      ) : (
+        <FlatList
+          data={outfits}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.outfitCard}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                <Text style={styles.outfitTitle}>{item.name}</Text>
+                <TouchableOpacity onPress={() => handleDeleteOutfit(item.id)}>
+                <Text style={styles.deleteButton}>Delete</Text>
+                </TouchableOpacity>
+            </View>
+            {item.items.map((piece: any, index: number) => (
+                <Text key={index}>
+                - {piece.category}: {piece.name}
+                </Text>
             ))}
-            <TouchableOpacity
-              onPress={() => handleDelete(item.id)}
-              style={styles.deleteButton}
-            >
-              <Text style={{ color: "white", fontWeight: "bold" }}>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
+            </View>
+          )}
+        />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  outfitCard: {
-    backgroundColor: "#f0f0f0",
-    padding: 15,
-    margin: 10,
-    borderRadius: 10,
-  },
-  outfitName: {
+  header: {
+    fontSize: 22,
     fontWeight: "bold",
+    marginBottom: 15,
+  },
+  outfitCard: {
+    padding: 15,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 10,
+    marginBottom: 15,
+  },
+  outfitTitle: {
     fontSize: 16,
+    fontWeight: "bold",
     marginBottom: 5,
   },
   deleteButton: {
-    marginTop: 10,
-    backgroundColor: "red",
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 6,
-    alignSelf: "flex-start",
-  },
+    color: "red",
+    fontWeight: "bold",
+  }  
 });
