@@ -8,7 +8,6 @@ import {
   ScrollView,
   Alert,
   Platform,
-  TextInput,
 } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 
@@ -26,6 +25,7 @@ const CATEGORIES = [
 export default function RollModal() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [rolledItems, setRolledItems] = useState<any[]>([]);
+  const [rollCount, setRollCount] = useState(0);
   const db = useSQLiteContext();
 
   const toggleCategory = (category: string) => {
@@ -48,12 +48,20 @@ export default function RollModal() {
     }
 
     setRolledItems(results);
+    setRollCount((prev) => {
+      const newCount = prev + 1;
+      if (newCount >= 10) {
+        Alert.alert("Time to choose!", "You've rolled 10 times. Make a decision!");
+      }
+      return newCount;
+    });
 
     if (results.length > 0) {
       if (Platform.OS === "ios") {
         Alert.prompt(
           "Save Outfit",
-          `You rolled: ${results.map((item) => item.name).join(", ")}\n\nEnter a name for this outfit:`,
+          `You rolled: ${results.map((item) => item.name).join(", ")}
+\nEnter a name for this outfit:`,
           [
             {
               text: "Cancel",
@@ -71,7 +79,6 @@ export default function RollModal() {
           "plain-text"
         );
       } else {
-        // fallback for Android
         Alert.alert(
           "Roll Complete!",
           `You rolled: ${results.map((item) => item.name).join(", ")}`,
