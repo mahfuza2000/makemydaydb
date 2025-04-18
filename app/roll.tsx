@@ -188,7 +188,7 @@ export default function RollModal() {
 
       <TouchableOpacity onPress={handleRoll} style={styles.rollButton}>
         <Text style={styles.rollButtonText}>
-          {loading ? "Checking Weather..." : "Roll"}
+          {"Roll"}
         </Text>
       </TouchableOpacity>
     </ScrollView>
