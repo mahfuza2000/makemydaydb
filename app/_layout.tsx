@@ -4,7 +4,7 @@ import { StatusBar } from "expo-status-bar";
 
 //mss
 import React from "react";
-
+import { WeatherThresholdProvider } from "./weatherThresholdContext"; 
 
 const createDbIfNeeded = async (db: SQLiteDatabase) => {
   //
@@ -73,7 +73,7 @@ export default function RootLayout() {
   //   deleteOldDatabase();
   // }, []);
   return (
-    <>
+    <WeatherThresholdProvider> 
       <SQLiteProvider databaseName="new.db" onInit={createDbIfNeeded}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -87,6 +87,6 @@ export default function RootLayout() {
         </Stack>
       </SQLiteProvider>
       <StatusBar style="auto" />
-    </>
+    </WeatherThresholdProvider>
   );
 }

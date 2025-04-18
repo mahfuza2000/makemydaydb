@@ -1,5 +1,5 @@
 import { Stack, router } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,9 @@ import {
   Platform,
 } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
+import * as SecureStore from "expo-secure-store";
+import { useWeather } from "../hooks/useWeather";
+import { useWeatherThresholds } from "./weatherThresholdContext"; 
 
 const CATEGORIES = [
   "Shirt",
@@ -26,9 +29,24 @@ export default function RollModal() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [rolledItems, setRolledItems] = useState<any[]>([]);
   const [rollCount, setRollCount] = useState(0);
+  const [weatherEnabled, setWeatherEnabled] = useState(false);
+
+  const { weather, loading, fetchWeather } = useWeather();
+  const { thresholds } = useWeatherThresholds(); 
   const db = useSQLiteContext();
 
+  useEffect(() => {
+    (async () => {
+      const enabled = await SecureStore.getItemAsync("weatherEnabled");
+      if (enabled === "true") {
+        setWeatherEnabled(true);
+        fetchWeather();
+      }
+    })();
+  }, []);
+
   const toggleCategory = (category: string) => {
+    if (isCategoryDisabled(category)) return;
     setSelectedCategories((prev) =>
       prev.includes(category)
         ? prev.filter((c) => c !== category)
@@ -36,10 +54,23 @@ export default function RollModal() {
     );
   };
 
+  const isCategoryDisabled = (category: string) => {
+    if (!weatherEnabled || !weather) return false;
+
+    if (category === "Outerwear" && weather.temp >= thresholds.outerwearHot) return true;
+    if (category === "Pants" && weather.temp >= thresholds.pantsHot) return true;
+    if (category === "Shirt" && weather.temp <= thresholds.shirtCold) return true;
+    if (category === "Dress" && weather.temp <= thresholds.dressCold) return true;
+
+    return false;
+  };
+
   const handleRoll = async () => {
     const results = [];
 
     for (const category of selectedCategories) {
+      if (isCategoryDisabled(category)) continue;
+
       const items = await db.getAllAsync(
         `SELECT * FROM users WHERE category = ? ORDER BY RANDOM() LIMIT 1`,
         [category]
@@ -63,15 +94,11 @@ export default function RollModal() {
           `You rolled: ${results.map((item) => item.name).join(", ")}
 \nEnter a name for this outfit:`,
           [
-            {
-              text: "Cancel",
-              style: "cancel",
-            },
+            { text: "Cancel", style: "cancel" },
             {
               text: "Save",
               onPress: async (text) => {
-                const outfitName =
-                  text?.trim() || `Outfit ${new Date().toLocaleTimeString()}`;
+                const outfitName = text?.trim() || `Outfit ${new Date().toLocaleTimeString()}`;
                 await handleSaveOutfit(results, outfitName);
               },
             },
@@ -119,31 +146,50 @@ export default function RollModal() {
     <ScrollView contentContainerStyle={styles.container}>
       <Stack.Screen options={{ title: "Roll Outfit" }} />
 
+      {weatherEnabled && weather && (
+        <View style={styles.weatherBadge}>
+          <Text style={styles.weatherText}>
+            {weather.condition} - {weather.temp}°F
+          </Text>
+        </View>
+      )}
+
       <Text style={styles.label}>Which categories do you want to roll?</Text>
+
       <View style={styles.options}>
-        {CATEGORIES.map((cat) => (
-          <TouchableOpacity
-            key={cat}
-            onPress={() => toggleCategory(cat)}
-            style={[
-              styles.option,
-              selectedCategories.includes(cat) && styles.optionSelected,
-            ]}
-          >
-            <Text
+        {CATEGORIES.map((cat) => {
+          const disabled = isCategoryDisabled(cat);
+          const isSelected = selectedCategories.includes(cat);
+
+          return (
+            <TouchableOpacity
+              key={cat}
+              onPress={() => toggleCategory(cat)}
               style={[
-                styles.optionText,
-                selectedCategories.includes(cat) && styles.optionTextSelected,
+                styles.option,
+                isSelected && styles.optionSelected,
+                disabled && styles.optionDisabled,
               ]}
+              disabled={disabled}
             >
-              {cat}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <Text
+                style={[
+                  styles.optionText,
+                  isSelected && styles.optionTextSelected,
+                  disabled && styles.optionTextDisabled,
+                ]}
+              >
+                {cat}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
 
       <TouchableOpacity onPress={handleRoll} style={styles.rollButton}>
-        <Text style={styles.rollButtonText}>Roll</Text>
+        <Text style={styles.rollButtonText}>
+          {loading ? "Checking Weather..." : "Roll"}
+        </Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -153,6 +199,17 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     alignItems: "center",
+  },
+  weatherBadge: {
+    backgroundColor: "lightblue",
+    padding: 8,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  weatherText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "navy",
   },
   label: {
     fontSize: 18,
@@ -175,12 +232,19 @@ const styles = StyleSheet.create({
   optionSelected: {
     backgroundColor: "blue",
   },
+  optionDisabled: {
+    backgroundColor: "#ddd",
+    borderColor: "#aaa",
+  },
   optionText: {
     color: "black",
   },
   optionTextSelected: {
     color: "white",
     fontWeight: "bold",
+  },
+  optionTextDisabled: {
+    color: "gray",
   },
   rollButton: {
     backgroundColor: "blue",

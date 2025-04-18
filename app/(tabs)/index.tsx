@@ -178,12 +178,15 @@ export default function TabHome() {
       />
 
       <View style={styles.bottomButtons}>
-        <TouchableOpacity onPress={exportDatabase} style={styles.exportButton}>
-          <Text style={styles.buttonText}>Export DB</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push("/roll")} style={styles.rollButton}>
-          <Text style={styles.buttonText}>Roll!</Text>
-        </TouchableOpacity>
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <TouchableOpacity
+            onPress={() => router.push("/roll")}
+            style={styles.circleRollButton}
+          >
+            <Text style={{ fontSize: 28, textAlign: "center" }}>🎲</Text>
+            <Text style={styles.circleRollButtonText}>Roll!</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <Modal
@@ -355,5 +358,20 @@ const styles = StyleSheet.create({
   },
   dropDown: {
     borderColor: "#ccc",
-  }
+  },
+  circleRollButton: {
+    width: 75,
+    height: 75,
+    borderRadius: 50,
+    backgroundColor: "royalblue",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+  },
+  circleRollButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
+    marginTop: 4,
+  }  
 });
