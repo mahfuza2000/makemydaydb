@@ -14,6 +14,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import DropDownPicker from "react-native-dropdown-picker";
+import { theme } from "@/constants/theme";
 
 export default function TabHome() {
   const [data, setData] = useState([]);
@@ -68,9 +69,9 @@ export default function TabHome() {
   const headerRight = () => (
     <TouchableOpacity
       onPress={() => router.push("/modal")}
-      style={{ marginRight: 10 }}
+      style={{ marginRight: 10, marginTop: 5 }}
     >
-      <FontAwesome name="plus-circle" size={32} color="royalblue" />
+      <FontAwesome name="plus-circle" size={44} color="#a6d3f2" />
     </TouchableOpacity>
   );
 
@@ -162,13 +163,13 @@ export default function TabHome() {
             <View style={styles.buttonGroup}>
               <TouchableOpacity
                 onPress={() => router.push(`/modal?id=${item.id}`)}
-                style={[styles.button, { backgroundColor: "royalblue" }]}
+                style={[styles.button, { backgroundColor: "#afc3a8" }]}
               >
                 <Text style={styles.buttonText}>Edit</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => handleDelete(item.id)}
-                style={[styles.button, { backgroundColor: "cornflowerblue" }]}
+                style={[styles.button, { backgroundColor: "#ff5844" }]}
               >
                 <Text style={styles.buttonText}>Delete</Text>
               </TouchableOpacity>
@@ -183,8 +184,7 @@ export default function TabHome() {
             onPress={() => router.push("/roll")}
             style={styles.circleRollButton}
           >
-            <Text style={{ fontSize: 28, textAlign: "center" }}>🎲</Text>
-            <Text style={styles.circleRollButtonText}>Roll!</Text>
+            <Text style={{ fontSize: 30, textAlign: "center" }}>🎲</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -200,7 +200,7 @@ export default function TabHome() {
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
               <Text style={styles.modalTitle}>Filter Items</Text>
               <TouchableOpacity onPress={clearFilters}>
-                <Text style={{ color: "royalblue", fontWeight: "bold" }}>Clear</Text>
+                <Text style={{ color: "#ff5844", fontWeight: "bold" }}>Clear</Text>
               </TouchableOpacity>
             </View>
 
@@ -245,13 +245,13 @@ export default function TabHome() {
 
             <View style={{ flexDirection: "row", gap: 10, marginTop: 20 }}>
               <TouchableOpacity
-                style={[styles.button, { backgroundColor: "cornflowerblue", flex: 1 }]}
+                style={[styles.button, { backgroundColor: "#f7d78c", flex: 1 }]}
                 onPress={() => setShowFilters(false)}
               >
                 <Text style={styles.buttonText}>Close</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.button, { backgroundColor: "royalblue", flex: 1 }]}
+                style={[styles.button, { backgroundColor: "#afc3a8", flex: 1 }]}
                 onPress={() => setShowFilters(false)}
               >
                 <Text style={styles.buttonText}>Apply</Text>
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   filterButton: {
-    backgroundColor: "cornflowerblue",
+    backgroundColor: "#afc3a8",
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 8,
@@ -360,18 +360,21 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
   },
   circleRollButton: {
-    width: 75,
-    height: 75,
+    width: 70,
+    height: 70,
     borderRadius: 50,
-    backgroundColor: "royalblue",
+    backgroundColor: "#a6d3f2",
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
+    position: 'absolute',
+    bottom: 1,
+    right: 1
   },
   circleRollButtonText: {
     color: "white",
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 14,
     marginTop: 4,
   }  
 });

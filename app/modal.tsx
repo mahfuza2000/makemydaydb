@@ -285,13 +285,13 @@ export default function ItemModal() {
           <View style={{flexDirection: "row" , gap: 20, marginTop: 20}}>
               <TouchableOpacity
             onPress={handlePickImage}
-            style={[styles.button, { backgroundColor: "royalblue" }]}
+            style={[styles.button, { backgroundColor: "#afc3a8" }]}
           >
             <Text style={styles.buttonText}>Select Picture</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handlePickImagefromCamera}
-            style={[styles.button, { backgroundColor: "royalblue" }]}
+            style={[styles.button, { backgroundColor: "#afc3a8" }]}
           >
             <Text style={styles.buttonText}>Take Picture</Text>
           </TouchableOpacity>
@@ -307,7 +307,7 @@ export default function ItemModal() {
       <View style={{ flexDirection: "row", gap: 20, margin: 15 }}>
         <TouchableOpacity
           onPress={() => router.back()}
-          style={[styles.button, { backgroundColor: "cornflowerblue" }]}
+          style={[styles.button, { backgroundColor: "#ff5844" }]}
         >
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
@@ -315,7 +315,7 @@ export default function ItemModal() {
           onPress={async () => {
             editMode ? handleUpdate() : handleSave();
           }}
-          style={[styles.button, { backgroundColor: "royalblue" }]}
+          style={[styles.button, { backgroundColor: "#afc3a8" }]}
         >
           <Text style={styles.buttonText}>{editMode ? "Update" : "Save"}</Text>
         </TouchableOpacity>
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   selectedSeason: {
-    backgroundColor: "cornflowerblue",
+    backgroundColor: "#f7d78c",
     borderColor: "#ccc",
   },
   seasonButtonText: {
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
   },
   selectedColor: {
-    backgroundColor: "cornflowerblue",
+    backgroundColor: "#f7d78c",
     borderColor: "#ccc",
   },
   colorButtonText: {
@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   selectedCategory: {
-    backgroundColor: "cornflowerblue",
+    backgroundColor: "#f7d78c",
     borderColor: "#ccc",
   },
   categoryButtonText: {

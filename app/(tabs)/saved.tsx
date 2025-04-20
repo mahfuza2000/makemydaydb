@@ -57,7 +57,7 @@ export default function SavedOutfits() {
       <TouchableOpacity
         onPress={handleRandomRoll}
         style={{
-          backgroundColor: "royalblue",
+          backgroundColor: "#afc3a8",
           padding: 15,
           borderRadius: 10,
           margin: 15,
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     marginTop: 10,
-    backgroundColor: "red",
+    backgroundColor: "#ff5844",
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 6,
