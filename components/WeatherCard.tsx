@@ -13,7 +13,7 @@ export default function WeatherCard() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Current Weather</Text>
+      {/* <Text style={styles.title}>Current Weather</Text> */}
       {loading ? (
         <ActivityIndicator size="small" color="#555" />
       ) : weather ? (

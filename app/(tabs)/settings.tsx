@@ -164,7 +164,7 @@ export default function TabSettings() {
     <View style={styles.container}>
       <View style={styles.settingItem}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.settingText}>Collect Current Weather</Text>
+          <Text style={styles.settingText}>Filter By Current Weather</Text>
           <TouchableOpacity onPress={explainWeatherSetting}>
             <Text style={styles.linkText}>What does this mean?</Text>
           </TouchableOpacity>

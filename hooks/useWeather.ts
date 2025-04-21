@@ -12,7 +12,7 @@ export function useWeather() {
   const fetchWeather = async () => {
     const now = Date.now();
 
-    if (lastFetch && now - lastFetch < 10 * 60 * 1000) {
+    if (lastFetch && now - lastFetch < 30 * 60 * 1000) {
       console.log("Weather fetched recently, skipping fetch...");
       return;
     }
