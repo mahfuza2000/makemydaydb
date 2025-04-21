@@ -33,3 +33,4 @@ export function WeatherThresholdProvider({ children }: PropsWithChildren) {
 }
 
 export const useWeatherThresholds = () => useContext(WeatherThresholdContext);
+export default WeatherThresholdProvider; 
