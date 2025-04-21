@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
   },
   optionSelected: {
-    backgroundColor: "blue",
+    backgroundColor: "#f7d78c",
   },
   optionDisabled: {
     backgroundColor: "#ddd",
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     color: "gray",
   },
   rollButton: {
-    backgroundColor: "blue",
+    backgroundColor: "#afc3a8",
     padding: 15,
     borderRadius: 10,
     marginTop: 20,
