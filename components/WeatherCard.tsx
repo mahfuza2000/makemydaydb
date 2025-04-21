@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   location: {
-    fontSize: 14,
+    fontSize: 18,
     color: "#777",
   },
   bars: {
