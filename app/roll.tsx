@@ -92,7 +92,7 @@ export default function RollModal() {
         Alert.prompt(
           "Save Outfit",
           `You rolled: ${results.map((item) => item.name).join(", ")}
-\nEnter a name for this outfit:`,
+            \nEnter a name for this outfit:`,
           [
             { text: "Cancel", style: "cancel" },
             {

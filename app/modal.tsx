@@ -167,7 +167,7 @@ export default function ItemModal() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Stack.Screen options={{ title: "Item Modal" }} />
+      <Stack.Screen options={{ title: "Add New Item" }} />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View
           style={{

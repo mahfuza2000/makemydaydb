@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useSQLiteContext } from "expo-sqlite";
@@ -18,6 +19,7 @@ import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import DropDownPicker from "react-native-dropdown-picker";
 import { theme } from "@/constants/theme";
+
 
 
 
@@ -139,14 +141,52 @@ export default function TabHome() {
     <View style={{ flex: 1 }}>
       <Stack.Screen options={{ headerRight }} />
 
-      <View style={{ paddingHorizontal: 10, marginTop: 10, alignItems: "flex-end" }}>
+      {/* <View style={{ paddingHorizontal: 10, marginTop: 10, alignItems: "flex-end" }}>
         <TouchableOpacity
           onPress={() => setShowFilters(true)}
           style={styles.filterButton}
         >
           <Text style={styles.filterButtonText}>Filter By</Text>
         </TouchableOpacity>
+      </View> */}
+
+      <View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoryScroll}
+        >
+          {categoryItems.map((item) => (
+            <TouchableOpacity
+              key={item.value}
+              onPress={() => setCategoryValue(item.value)}
+              style={[
+                styles.categoryTab,
+                categoryValue === item.value && styles.categoryTabActive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.categoryTabText,
+                  categoryValue === item.value && styles.categoryTabTextActive,
+                ]}
+              >
+                {item.label.replace("All Categories", "All")}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <View style={{ paddingHorizontal: 10, marginTop: 5, alignItems: "flex-end" }}>
+          <TouchableOpacity
+            onPress={() => setShowFilters(true)}
+            style={styles.filterButton}
+          >
+            <Text style={styles.filterButtonText}>Filter By</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+
 
       {/* IT4 GridView */}
       <FlatList
@@ -172,8 +212,6 @@ export default function TabHome() {
           </TouchableOpacity>
         )}
       />
-
-
 
       <View style={styles.bottomButtons}>
         <View style={{ flex: 1, alignItems: "center" }}>
@@ -268,7 +306,8 @@ export default function TabHome() {
         visible={showDetailModal}
         transparent
         animationType="fade"
-        onRequestClose={() => setShowDetailModal(false)}>
+        onRequestClose={() => setShowDetailModal(false)}
+        >
         <TouchableWithoutFeedback onPress={() => setShowDetailModal(false)}>
           <View style={styles.modalOverlay}>
             <TouchableWithoutFeedback onPress={() => {}}>
@@ -276,7 +315,7 @@ export default function TabHome() {
                 {selectedItem && (
                   <>
                     {selectedItem.image ? (
-                      <Image source={{ uri: selectedItem.image }} style={{ width: "100%", height: 200, borderRadius: 10, marginBottom: 10 }} />
+                      <Image source={{ uri: selectedItem.image }} style={{ width: "100%", height: 400, borderRadius: 10, marginBottom: 10 }} />
                     ) : (
                       <View style={[styles.gridPlaceholder, { height: 200, marginBottom: 10 }]}>
                         <Text>❌</Text>
@@ -287,6 +326,16 @@ export default function TabHome() {
 
                     <View style={styles.buttonGroup}>
                       <TouchableOpacity
+                        onPress={async () => {
+                          await handleDelete(selectedItem.id);
+                          setShowDetailModal(false);
+                        }}
+                        style={[styles.button, { backgroundColor: "red", flex: 1 }]}
+                      >
+                        <Text style={styles.buttonText}>Delete</Text>
+                      </TouchableOpacity>
+                      
+                      <TouchableOpacity
                         onPress={() => {
                           setShowDetailModal(false);
                           router.push(`/modal?id=${selectedItem.id}`);
@@ -295,15 +344,7 @@ export default function TabHome() {
                       >
                         <Text style={styles.buttonText}>Edit</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={async () => {
-                          await handleDelete(selectedItem.id);
-                          setShowDetailModal(false);
-                        }}
-                        style={[styles.button, { backgroundColor: "cornflowerblue", flex: 1 }]}
-                      >
-                        <Text style={styles.buttonText}>Delete</Text>
-                      </TouchableOpacity>
+                      
                     </View>
                   </>
                 )}
@@ -398,6 +439,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "white",
     padding: 20,
+    paddingBottom: 40,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
@@ -458,5 +500,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#ddd",
   },
+
+  categoryScroll: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    gap: 8,
+  },
+  
+  categoryTab: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: "#eee",
+    borderRadius: 20,
+    marginRight: 6,
+  },
+  
+  categoryTabActive: {
+    backgroundColor: "#afc3a8",
+  },
+  
+  categoryTabText: {
+    color: "#333",
+    fontWeight: "400",
+  },
+  
+  categoryTabTextActive: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  
 
 });
