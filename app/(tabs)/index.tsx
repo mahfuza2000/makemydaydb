@@ -8,6 +8,9 @@ import {
   StyleSheet,
   Image,
   Modal,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useSQLiteContext } from "expo-sqlite";
@@ -16,9 +19,14 @@ import * as Sharing from "expo-sharing";
 import DropDownPicker from "react-native-dropdown-picker";
 import { theme } from "@/constants/theme";
 
+
+
 export default function TabHome() {
   const [data, setData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
+  // IT4
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [categoryValue, setCategoryValue] = useState("All");
@@ -140,43 +148,32 @@ export default function TabHome() {
         </TouchableOpacity>
       </View>
 
+      {/* IT4 GridView */}
       <FlatList
-        contentContainerStyle={{ paddingBottom: 140 }}
+        contentContainerStyle={styles.gridContainer}
         data={data}
         keyExtractor={(item) => item.id.toString()}
+        numColumns={3}
         renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              {item.image ? (
-                <Image source={{ uri: item.image }} style={styles.image} />
-              ) : (
-                <View style={styles.placeholderImage}>
-                  <Text>❌</Text>
-                </View>
-              )}
-              <View style={{ marginLeft: 10 }}>
-                <Text>{item.name}</Text>
-                <Text>{item.category}</Text>
+          <TouchableOpacity
+            style={styles.gridItem}
+            onLongPress={() => {
+              setSelectedItem(item);
+              setShowDetailModal(true);
+            }}
+          >
+            {item.image ? (
+              <Image source={{ uri: item.image }} style={styles.gridImage} />
+            ) : (
+              <View style={styles.gridPlaceholder}>
+                <Text>❌</Text>
               </View>
-            </View>
-
-            <View style={styles.buttonGroup}>
-              <TouchableOpacity
-                onPress={() => router.push(`/modal?id=${item.id}`)}
-                style={[styles.button, { backgroundColor: "#afc3a8" }]}
-              >
-                <Text style={styles.buttonText}>Edit</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => handleDelete(item.id)}
-                style={[styles.button, { backgroundColor: "#ff5844" }]}
-              >
-                <Text style={styles.buttonText}>Delete</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+            )}
+          </TouchableOpacity>
         )}
       />
+
+
 
       <View style={styles.bottomButtons}>
         <View style={{ flex: 1, alignItems: "center" }}>
@@ -195,71 +192,128 @@ export default function TabHome() {
         animationType="slide"
         onRequestClose={() => setShowFilters(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <Text style={styles.modalTitle}>Filter Items</Text>
-              <TouchableOpacity onPress={clearFilters}>
-                <Text style={{ color: "#ff5844", fontWeight: "bold" }}>Clear</Text>
-              </TouchableOpacity>
-            </View>
+        <TouchableWithoutFeedback onPress={() => setShowFilters(false)}>
+          <View style={styles.modalOverlay}>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View style={styles.modalContent}>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <Text style={styles.modalTitle}>Filter Items</Text>
+                  <TouchableOpacity onPress={clearFilters}>
+                    <Text style={{ color: "#ff5844", fontWeight: "bold" }}>Clear</Text>
+                  </TouchableOpacity>
+                </View>
 
-            <DropDownPicker
-              open={categoryOpen}
-              value={categoryValue}
-              items={categoryItems}
-              setOpen={setCategoryOpen}
-              setValue={(callback) => setCategoryValue(callback())}
-              setItems={setCategoryItems}
-              placeholder="Select Category"
-              zIndex={3000}
-              zIndexInverse={1000}
-              style={[styles.dropDown, { marginTop: categoryOpen ? 215 : 10 }]}
-            />
+                <DropDownPicker
+                  open={categoryOpen}
+                  value={categoryValue}
+                  items={categoryItems}
+                  setOpen={setCategoryOpen}
+                  setValue={(callback) => setCategoryValue(callback())}
+                  setItems={setCategoryItems}
+                  placeholder="Select Category"
+                  zIndex={3000}
+                  zIndexInverse={1000}
+                  style={[styles.dropDown, { marginTop: categoryOpen ? 215 : 10 }]}
+                />
 
-            <DropDownPicker
-              open={colorOpen}
-              value={colorValue}
-              items={colorItems}
-              setOpen={setColorOpen}
-              setValue={(callback) => setColorValue(callback())}
-              setItems={setColorItems}
-              placeholder="Select Color"
-              zIndex={2000}
-              zIndexInverse={2000}
-              style={[styles.dropDown, { marginTop: colorOpen ? 210 : 10 }]}
-            />
+                <DropDownPicker
+                  open={colorOpen}
+                  value={colorValue}
+                  items={colorItems}
+                  setOpen={setColorOpen}
+                  setValue={(callback) => setColorValue(callback())}
+                  setItems={setColorItems}
+                  placeholder="Select Color"
+                  zIndex={2000}
+                  zIndexInverse={2000}
+                  style={[styles.dropDown, { marginTop: colorOpen ? 210 : 10 }]}
+                />
 
-            <DropDownPicker
-              open={seasonOpen}
-              value={seasonValue}
-              items={seasonItems}
-              setOpen={setSeasonOpen}
-              setValue={(callback) => setSeasonValue(callback())}
-              setItems={setSeasonItems}
-              placeholder="Select Season"
-              zIndex={1000}
-              zIndexInverse={3000}
-              style={[styles.dropDown, { marginTop: seasonOpen ? 210 : 10 }]}
-            />
+                <DropDownPicker
+                  open={seasonOpen}
+                  value={seasonValue}
+                  items={seasonItems}
+                  setOpen={setSeasonOpen}
+                  setValue={(callback) => setSeasonValue(callback())}
+                  setItems={setSeasonItems}
+                  placeholder="Select Season"
+                  zIndex={1000}
+                  zIndexInverse={3000}
+                  style={[styles.dropDown, { marginTop: seasonOpen ? 210 : 10 }]}
+                />
 
-            <View style={{ flexDirection: "row", gap: 10, marginTop: 20 }}>
-              <TouchableOpacity
-                style={[styles.button, { backgroundColor: "#f7d78c", flex: 1 }]}
-                onPress={() => setShowFilters(false)}
-              >
-                <Text style={styles.buttonText}>Close</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, { backgroundColor: "#afc3a8", flex: 1 }]}
-                onPress={() => setShowFilters(false)}
-              >
-                <Text style={styles.buttonText}>Apply</Text>
-              </TouchableOpacity>
-            </View>
+                <View style={{ flexDirection: "row", gap: 10, marginTop: 20 }}>
+                  <TouchableOpacity
+                    style={[styles.button, { backgroundColor: "#f7d78c", flex: 1 }]}
+                    onPress={() => setShowFilters(false)}
+                  >
+                    <Text style={styles.buttonText}>Close</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, { backgroundColor: "#afc3a8", flex: 1 }]}
+                    onPress={() => setShowFilters(false)}
+                  >
+                    <Text style={styles.buttonText}>Apply</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
+
+
+      {/* IT4 */}
+      <Modal
+        visible={showDetailModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowDetailModal(false)}>
+        <TouchableWithoutFeedback onPress={() => setShowDetailModal(false)}>
+          <View style={styles.modalOverlay}>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View style={styles.modalContent}>
+                {selectedItem && (
+                  <>
+                    {selectedItem.image ? (
+                      <Image source={{ uri: selectedItem.image }} style={{ width: "100%", height: 200, borderRadius: 10, marginBottom: 10 }} />
+                    ) : (
+                      <View style={[styles.gridPlaceholder, { height: 200, marginBottom: 10 }]}>
+                        <Text>❌</Text>
+                      </View>
+                    )}
+                    <Text style={{ fontWeight: "bold", fontSize: 16 }}>{selectedItem.name}</Text>
+                    <Text style={{ marginBottom: 10 }}>{selectedItem.category}</Text>
+
+                    <View style={styles.buttonGroup}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setShowDetailModal(false);
+                          router.push(`/modal?id=${selectedItem.id}`);
+                        }}
+                        style={[styles.button, { backgroundColor: "royalblue", flex: 1 }]}
+                      >
+                        <Text style={styles.buttonText}>Edit</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={async () => {
+                          await handleDelete(selectedItem.id);
+                          setShowDetailModal(false);
+                        }}
+                        style={[styles.button, { backgroundColor: "cornflowerblue", flex: 1 }]}
+                      >
+                        <Text style={styles.buttonText}>Delete</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
+
     </View>
   );
 }
@@ -376,5 +430,33 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 14,
     marginTop: 4,
-  }  
+  },
+  
+  // IT4
+  gridContainer: {
+    padding: 5,
+    paddingBottom: 140,
+    justifyContent: "center",
+  },
+  gridItem: {
+    width: "33.33%",
+    aspectRatio: 1,
+    margin: 1,
+    borderRadius: 0,
+    overflow: "hidden",
+    backgroundColor: "#f0f0f0",
+  },
+  gridImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  gridPlaceholder: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ddd",
+  },
+
 });
