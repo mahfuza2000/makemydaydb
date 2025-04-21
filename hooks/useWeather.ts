@@ -5,7 +5,7 @@ import Constants from "expo-constants";
 const API_KEY = Constants.expoConfig?.extra?.WEATHER_API_KEY || "";
 
 export function useWeather() {
-  const [weather, setWeather] = useState<null | { temp: number; condition: string }>(null);
+  const [weather, setWeather] = useState<null | { temp: number; condition: string; location: string }>(null);
   const [loading, setLoading] = useState(false);
   const [lastFetch, setLastFetch] = useState<number | null>(null);
 
@@ -38,6 +38,7 @@ export function useWeather() {
       setWeather({
         temp: data.current.temp_f,
         condition: data.current.condition.text, 
+        location: `${data.location.name}`
       });
       setLastFetch(now);
     } catch (error) {

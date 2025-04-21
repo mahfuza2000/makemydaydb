@@ -22,13 +22,56 @@ export default function SavedOutfits() {
     }, [])
   );
 
+  // const loadOutfits = async () => {
+  //   const result = await database.getAllAsync(
+  //     `CREATE TABLE IF NOT EXISTS saved_outfits (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, items TEXT)`
+  //   );
+  //   const data = await database.getAllAsync(`SELECT * FROM saved_outfits`);
+  //   setOutfits(data);
+  // };
+
   const loadOutfits = async () => {
-    const result = await database.getAllAsync(
+    await database.getAllAsync(
       `CREATE TABLE IF NOT EXISTS saved_outfits (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, items TEXT)`
     );
+  
     const data = await database.getAllAsync(`SELECT * FROM saved_outfits`);
-    setOutfits(data);
+  
+    const enrichedOutfits = await Promise.all(
+      data.map(async (outfit) => {
+        let items = [];
+  
+        try {
+          items = JSON.parse(outfit.items);
+        } catch (e) {
+          console.error("Error parsing items:", outfit.items);
+        }
+  
+        const enrichedItems = await Promise.all(
+          items.map(async (item) => {
+            const match = await database.getFirstAsync(
+              `SELECT image FROM users WHERE name = ? AND category = ? LIMIT 1`,
+              [item.name, item.category]
+            );
+  
+            return {
+              ...item,
+              image: match?.image || null,
+            };
+          })
+        );
+  
+        return {
+          ...outfit,
+          items: enrichedItems, // Make sure this is an array, not a string!
+        };
+      })
+    );
+  
+    setOutfits(enrichedOutfits);
   };
+  
+   
 
   const handleDelete = async (id) => {
     await database.runAsync(`DELETE FROM saved_outfits WHERE id = ?`, [id]);
@@ -74,9 +117,22 @@ export default function SavedOutfits() {
         renderItem={({ item }) => (
           <View style={styles.outfitCard}>
             <Text style={styles.outfitName}>{item.name}</Text>
-            {JSON.parse(item.items).map((piece, index) => (
+            {/* {JSON.parse(item.items).map((piece, index) => (
               <Text key={index}>{piece.category}: {piece.name}</Text>
+            ))} */}
+            {item.items.map((piece, index) => (
+              <View key={index} style={{ flexDirection: "row", alignItems: "center", marginVertical: 4 }}>
+                {piece.image && (
+                  <Image
+                    source={{ uri: piece.image }}
+                    style={{ width: 50, height: 50, borderRadius: 8, marginRight: 10 }}
+                    resizeMode="cover"
+                  />
+                )}
+                <Text>{piece.category}: {piece.name}</Text>
+              </View>
             ))}
+
             <TouchableOpacity
               onPress={() => handleDelete(item.id)}
               style={styles.deleteButton}

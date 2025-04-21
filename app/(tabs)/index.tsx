@@ -8,9 +8,7 @@ import {
   StyleSheet,
   Image,
   Modal,
-  KeyboardAvoidingView,
   TouchableWithoutFeedback,
-  Keyboard,
   ScrollView
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -18,7 +16,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import DropDownPicker from "react-native-dropdown-picker";
-import { theme } from "@/constants/theme";
+import WeatherCard from "@/components/WeatherCard";
 
 
 
@@ -140,6 +138,7 @@ export default function TabHome() {
   return (
     <View style={{ flex: 1 }}>
       <Stack.Screen options={{ headerRight }} />
+      <WeatherCard />
 
       {/* <View style={{ paddingHorizontal: 10, marginTop: 10, alignItems: "flex-end" }}>
         <TouchableOpacity
@@ -151,6 +150,15 @@ export default function TabHome() {
       </View> */}
 
       <View>
+        <View style={{ paddingHorizontal: 10, marginTop: 5, alignItems: "flex-end" }}>
+          <TouchableOpacity
+            onPress={() => setShowFilters(true)}
+            style={styles.filterButton}
+          >
+            <Text style={styles.filterButtonText}>Filter By</Text>
+          </TouchableOpacity>
+        </View>
+
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -177,14 +185,7 @@ export default function TabHome() {
           ))}
         </ScrollView>
 
-        <View style={{ paddingHorizontal: 10, marginTop: 5, alignItems: "flex-end" }}>
-          <TouchableOpacity
-            onPress={() => setShowFilters(true)}
-            style={styles.filterButton}
-          >
-            <Text style={styles.filterButtonText}>Filter By</Text>
-          </TouchableOpacity>
-        </View>
+        
       </View>
 
 
@@ -197,7 +198,7 @@ export default function TabHome() {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.gridItem}
-            onLongPress={() => {
+            onPress={() => {
               setSelectedItem(item);
               setShowDetailModal(true);
             }}

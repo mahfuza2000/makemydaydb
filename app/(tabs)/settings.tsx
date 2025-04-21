@@ -61,24 +61,69 @@ export default function TabSettings() {
     Alert.alert("Defaults Restored", "Temperature rules have been reset to default values.");
   };
 
+  // const renderThresholdEditor = (field: string, label: string) => (
+  //   <View style={styles.sliderBlock}>
+  //     <View style={styles.labelRow}>
+  //       <Text style={styles.label}>{label}: </Text>
+
+  //       {editingField === field ? (
+  //         <TextInput
+  //           style={styles.inlineInput}
+  //           keyboardType="numeric"
+  //           value={thresholds[field as keyof typeof thresholds]?.toString() ?? ""}
+  //           onChangeText={(text) => {
+  //             if (text === "") {
+  //               setThresholds((prev) => ({ ...prev, [field]: 0 }));
+  //             } else {
+  //               const num = parseInt(text, 10);
+  //               if (!isNaN(num)) {
+  //                 setThresholds((prev) => ({ ...prev, [field]: Math.min(Math.max(num, 0), 100) }));
+  //               }
+  //             }
+  //           }}
+  //           onBlur={() => setEditingField(null)}
+  //           autoFocus
+  //         />
+  //       ) : (
+  //         <TouchableOpacity onPress={() => setEditingField(field)}>
+  //           <Text style={styles.inlineNumber}>{thresholds[field as keyof typeof thresholds]}°F</Text>
+  //         </TouchableOpacity>
+  //       )}
+  //     </View>
+
+  //     <View style={styles.sliderRow}>
+  //       <Text style={styles.rangeLabel}>0°F</Text>
+  //       <Slider
+  //         style={{ flex: 1, marginHorizontal: 10 }}
+  //         minimumValue={0}
+  //         maximumValue={100}
+  //         step={1}
+  //         value={thresholds[field as keyof typeof thresholds]}
+  //         onValueChange={(value) => setThresholds((prev) => ({ ...prev, [field]: value }))}
+  //       />
+  //       <Text style={styles.rangeLabel}>100°F</Text>
+  //     </View>
+  //   </View>
+  // );
   const renderThresholdEditor = (field: string, label: string) => (
     <View style={styles.sliderBlock}>
       <View style={styles.labelRow}>
         <Text style={styles.label}>{label}: </Text>
-
+  
         {editingField === field ? (
           <TextInput
             style={styles.inlineInput}
             keyboardType="numeric"
             value={thresholds[field as keyof typeof thresholds]?.toString() ?? ""}
             onChangeText={(text) => {
-              if (text === "") {
-                setThresholds((prev) => ({ ...prev, [field]: 0 }));
-              } else {
-                const num = parseInt(text, 10);
-                if (!isNaN(num)) {
-                  setThresholds((prev) => ({ ...prev, [field]: Math.min(Math.max(num, 0), 100) }));
-                }
+              const num = parseInt(text, 10);
+              if (!isNaN(num)) {
+                const boundedValue = Math.min(Math.max(num, 0), 100);
+                console.log(`Updated value for ${field}: ${boundedValue}`); // Debug log
+                setThresholds((prev) => ({
+                  ...prev,
+                  [field]: boundedValue,
+                }));
               }
             }}
             onBlur={() => setEditingField(null)}
@@ -86,11 +131,13 @@ export default function TabSettings() {
           />
         ) : (
           <TouchableOpacity onPress={() => setEditingField(field)}>
-            <Text style={styles.inlineNumber}>{thresholds[field as keyof typeof thresholds]}°F</Text>
+            <Text style={styles.inlineNumber}>
+              {thresholds[field as keyof typeof thresholds]}°F
+            </Text>
           </TouchableOpacity>
         )}
       </View>
-
+  
       <View style={styles.sliderRow}>
         <Text style={styles.rangeLabel}>0°F</Text>
         <Slider
@@ -98,14 +145,21 @@ export default function TabSettings() {
           minimumValue={0}
           maximumValue={100}
           step={1}
-          value={thresholds[field as keyof typeof thresholds]}
-          onValueChange={(value) => setThresholds((prev) => ({ ...prev, [field]: value }))}
+          value={thresholds[field as keyof typeof thresholds]} // This should reflect the state
+          onValueChange={(value) => {
+            const roundedValue = Math.round(value);
+            console.log(`Slider value for ${field}: ${roundedValue}`); // Debug log
+            setThresholds((prev) => ({
+              ...prev,
+              [field]: roundedValue,
+            }));
+          }}
         />
         <Text style={styles.rangeLabel}>100°F</Text>
       </View>
     </View>
   );
-
+  
   return (
     <View style={styles.container}>
       <View style={styles.settingItem}>
