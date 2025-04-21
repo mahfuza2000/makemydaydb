@@ -9,9 +9,12 @@ import {
   Image,
   Modal,
   TouchableWithoutFeedback,
-  ScrollView
+  ScrollView,
 } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Entypo from '@expo/vector-icons/Entypo';
+
 import { useSQLiteContext } from "expo-sqlite";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
@@ -74,14 +77,14 @@ export default function TabHome() {
     }, [categoryValue, colorValue, seasonValue])
   );
 
-  const headerRight = () => (
-    <TouchableOpacity
-      onPress={() => router.push("/modal")}
-      style={{ marginRight: 10, marginTop: 5 }}
-    >
-      <FontAwesome name="plus-circle" size={44} color="#a6d3f2" />
-    </TouchableOpacity>
-  );
+  // const headerRight = () => (
+  //   <TouchableOpacity
+  //     onPress={() => router.push("/modal")}
+  //     style={{ marginRight: 10, marginTop: 5 }}
+  //   >
+  //     <FontAwesome6 name="circle-plus" size={44} color="#6bb1e2" />
+  //   </TouchableOpacity>
+  // );
 
   const loadData = async () => {
     let query = "SELECT * FROM users WHERE 1=1";
@@ -137,8 +140,8 @@ export default function TabHome() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen options={{ headerRight }} />
-      <WeatherCard />
+      {/* <Stack.Screen options={{ headerRight }} /> */}
+      <WeatherCard/>
 
       {/* <View style={{ paddingHorizontal: 10, marginTop: 10, alignItems: "flex-end" }}>
         <TouchableOpacity
@@ -150,41 +153,50 @@ export default function TabHome() {
       </View> */}
 
       <View>
-        <View style={{ paddingHorizontal: 10, marginTop: 5, alignItems: "flex-end" }}>
+        {/* <View style={{ paddingHorizontal: 10, marginTop: 10, alignItems: "flex-end" }}>
           <TouchableOpacity
             onPress={() => setShowFilters(true)}
             style={styles.filterButton}
           >
-            <Text style={styles.filterButtonText}>Filter By</Text>
+            <Ionicons name="filter" size={22} color="#fff" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoryScroll}
-        >
-          {categoryItems.map((item) => (
-            <TouchableOpacity
-              key={item.value}
-              onPress={() => setCategoryValue(item.value)}
-              style={[
-                styles.categoryTab,
-                categoryValue === item.value && styles.categoryTabActive,
-              ]}
-            >
-              <Text
+        <View style={styles.tabContainer}>
+          <TouchableOpacity
+            onPress={() => setShowFilters(true)}
+            style={styles.filterButton}
+          >
+            <Ionicons name="filter" size={22} color="#fff" />
+          </TouchableOpacity>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoryScroll}
+          >
+
+            {categoryItems.map((item) => (
+              <TouchableOpacity
+                key={item.value}
+                onPress={() => setCategoryValue(item.value)}
                 style={[
-                  styles.categoryTabText,
-                  categoryValue === item.value && styles.categoryTabTextActive,
+                  styles.categoryTab,
+                  categoryValue === item.value && styles.categoryTabActive,
                 ]}
               >
-                {item.label.replace("All Categories", "All")}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
+                <Text
+                  style={[
+                    styles.categoryTabText,
+                    categoryValue === item.value && styles.categoryTabTextActive,
+                  ]}
+                >
+                  {item.label.replace("All Categories", "All")}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
         
       </View>
 
@@ -214,13 +226,26 @@ export default function TabHome() {
         )}
       />
 
+      {/* Roll Button */}
       <View style={styles.bottomButtons}>
         <View style={{ flex: 1, alignItems: "center" }}>
           <TouchableOpacity
             onPress={() => router.push("/roll")}
             style={styles.circleRollButton}
           >
-            <Text style={{ fontSize: 30, textAlign: "center" }}>🎲</Text>
+            <Ionicons name="dice" size={44} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Add Button */}
+      <View style={styles.bottomButtons}>
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <TouchableOpacity
+            onPress={() => router.push("/modal")}
+            style={styles.addButton}
+          >
+            <Entypo name="plus" size={44} color="#fff" />
           </TouchableOpacity>
         </View>
       </View>
@@ -252,7 +277,7 @@ export default function TabHome() {
                   placeholder="Select Category"
                   zIndex={3000}
                   zIndexInverse={1000}
-                  style={[styles.dropDown, { marginTop: categoryOpen ? 215 : 10 }]}
+                  style={[styles.dropDown, { marginTop: categoryOpen ? 250 : 10 }]}
                 />
 
                 <DropDownPicker
@@ -283,13 +308,13 @@ export default function TabHome() {
 
                 <View style={{ flexDirection: "row", gap: 10, marginTop: 20 }}>
                   <TouchableOpacity
-                    style={[styles.button, { backgroundColor: "#f7d78c", flex: 1 }]}
+                    style={[styles.button, { backgroundColor: "#ffd039", flex: 1,}]}
                     onPress={() => setShowFilters(false)}
                   >
                     <Text style={styles.buttonText}>Close</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[styles.button, { backgroundColor: "#afc3a8", flex: 1 }]}
+                    style={[styles.button, { backgroundColor: "#78bb61", flex: 1 }]}
                     onPress={() => setShowFilters(false)}
                   >
                     <Text style={styles.buttonText}>Apply</Text>
@@ -331,7 +356,7 @@ export default function TabHome() {
                           await handleDelete(selectedItem.id);
                           setShowDetailModal(false);
                         }}
-                        style={[styles.button, { backgroundColor: "red", flex: 1 }]}
+                        style={[styles.button, { backgroundColor: "#ff5844", flex: 1 }]}
                       >
                         <Text style={styles.buttonText}>Delete</Text>
                       </TouchableOpacity>
@@ -341,7 +366,7 @@ export default function TabHome() {
                           setShowDetailModal(false);
                           router.push(`/modal?id=${selectedItem.id}`);
                         }}
-                        style={[styles.button, { backgroundColor: "royalblue", flex: 1 }]}
+                        style={[styles.button, { backgroundColor: "#78bb61", flex: 1 }]}
                       >
                         <Text style={styles.buttonText}>Edit</Text>
                       </TouchableOpacity>
@@ -398,9 +423,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   filterButton: {
-    backgroundColor: "#afc3a8",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    backgroundColor: "#78bb61",
+    paddingVertical: 8,
+    paddingHorizontal: 9,
     borderRadius: 8,
     alignSelf: "flex-end",
   },
@@ -417,6 +442,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     gap: 10,
+    elevation: 5,
   },
   exportButton: {
     flex: 1,
@@ -460,15 +486,35 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 50,
-    backgroundColor: "#a6d3f2",
+    backgroundColor: "#ffd039",
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
     position: 'absolute',
     bottom: 1,
-    right: 1
+    right: 1,
+    elevation: 4,
   },
   circleRollButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 14,
+    marginTop: 4,
+  },
+  addButton: {
+    width: 63,
+    height: 63,
+    borderRadius: 50,
+    backgroundColor: "#6bb1e2",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 0,
+    position: 'absolute',
+    bottom: 1,
+    left: 1,
+    elevation: 4,
+  },
+  addButtonText: {
     color: "white",
     fontWeight: "bold",
     fontSize: 14,
@@ -477,15 +523,16 @@ const styles = StyleSheet.create({
   
   // IT4
   gridContainer: {
-    padding: 5,
-    paddingBottom: 140,
+    padding: 10,
+    paddingBottom: 100,
+    borderRadius: 0,
     justifyContent: "center",
   },
   gridItem: {
-    width: "33.33%",
+    width: "31%",
     aspectRatio: 1,
-    margin: 1,
-    borderRadius: 0,
+    margin: 5,
+    borderRadius: 10,
     overflow: "hidden",
     backgroundColor: "#f0f0f0",
   },
@@ -504,20 +551,21 @@ const styles = StyleSheet.create({
 
   categoryScroll: {
     paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 0,
     gap: 8,
+    marginBottom: -8,
   },
   
   categoryTab: {
-    paddingVertical: 6,
+    paddingVertical: 9,
     paddingHorizontal: 12,
-    backgroundColor: "#eee",
-    borderRadius: 20,
+    backgroundColor: "#e8e8e8",
+    borderRadius: 15,
     marginRight: 6,
   },
   
   categoryTabActive: {
-    backgroundColor: "#afc3a8",
+    backgroundColor: "#78bb61",
   },
   
   categoryTabText: {
@@ -529,6 +577,13 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
-  
+
+  tabContainer: {
+    paddingLeft: 10,
+    marginBottom: 10,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    gap: 10
+  },
 
 });

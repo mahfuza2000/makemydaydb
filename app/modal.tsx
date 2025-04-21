@@ -285,13 +285,13 @@ export default function ItemModal() {
           <View style={{flexDirection: "row" , gap: 20, marginTop: 20}}>
               <TouchableOpacity
             onPress={handlePickImage}
-            style={[styles.button, { backgroundColor: "#afc3a8" }]}
+            style={[styles.button, { backgroundColor: "#6bb1e2" }]}
           >
             <Text style={styles.buttonText}>Select Picture</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handlePickImagefromCamera}
-            style={[styles.button, { backgroundColor: "#afc3a8" }]}
+            style={[styles.button, { backgroundColor: "#6bb1e2" }]}
           >
             <Text style={styles.buttonText}>Take Picture</Text>
           </TouchableOpacity>
@@ -315,7 +315,7 @@ export default function ItemModal() {
           onPress={async () => {
             editMode ? handleUpdate() : handleSave();
           }}
-          style={[styles.button, { backgroundColor: "#afc3a8" }]}
+          style={[styles.button, { backgroundColor: "#78bb61" }]}
         >
           <Text style={styles.buttonText}>{editMode ? "Update" : "Save"}</Text>
         </TouchableOpacity>
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   selectedSeason: {
-    backgroundColor: "#f7d78c",
+    backgroundColor: "#ffd039",
     borderColor: "#ccc",
   },
   seasonButtonText: {
@@ -359,6 +359,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   selectedSeasonText: {
+    fontWeight: "bold",
     color: "#fff",
   },
   label: {
@@ -398,15 +399,16 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
   },
   selectedColor: {
-    backgroundColor: "#f7d78c",
-    borderColor: "#ccc",
+    backgroundColor: "#fff",
+    borderColor: "#aaa",
   },
   colorButtonText: {
     fontSize: 16,
     color: "#333",
   },
   selectedColorText: {
-    color: "#fff",
+    fontWeight: "bold",
+    color: "#000",
   },
   picker: {
     height: 40,
@@ -432,7 +434,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   selectedCategory: {
-    backgroundColor: "#f7d78c",
+    backgroundColor: "#78bb61",
     borderColor: "#ccc",
   },
   categoryButtonText: {
@@ -440,6 +442,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   selectedCategoryText: {
+    fontWeight: "bold",
     color: "#fff",
   },
 });

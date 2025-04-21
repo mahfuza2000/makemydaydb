@@ -18,9 +18,12 @@ export default function WeatherCard() {
         <ActivityIndicator size="small" color="#555" />
       ) : weather ? (
         <>
-          <Text style={styles.temp}>{weather.temp}°F</Text>
-          <Text style={styles.condition}>{weather.condition}</Text>
+          
           <Text style={styles.location}>{weather.location}</Text>
+          <Text style={styles.bars}>|</Text>
+          <Text style={styles.temp}>{weather.temp}°F</Text>
+          <Text style={styles.bars}>|</Text>
+          <Text style={styles.condition}>{weather.condition}</Text>
 
         </>
       ) : (
@@ -33,7 +36,7 @@ export default function WeatherCard() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
-    padding: 16,
+    padding: 5,
     borderRadius: 10,
     elevation: 3,
     shadowColor: "#000",
@@ -42,7 +45,9 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     alignItems: "center",
     marginTop: 16,
-    marginHorizontal: 16,
+    marginHorizontal: 10,
+    flexDirection: "row",
+    justifyContent: "space-evenly"
   },
   title: {
     fontSize: 16,
@@ -50,7 +55,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   temp: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: "bold",
     marginBottom: 4,
   },
@@ -62,6 +67,11 @@ const styles = StyleSheet.create({
   location: {
     fontSize: 14,
     color: "#777",
+  },
+  bars: {
+    fontSize: 24,
+    color: "#ddd",
+    marginBottom: 5,
   },
   error: {
     fontSize: 14,

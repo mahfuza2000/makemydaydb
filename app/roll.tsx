@@ -192,6 +192,17 @@ export default function RollModal() {
         </Text>
       </TouchableOpacity>
     </ScrollView>
+
+  // <View style={styles.bottomButtons}>
+  // <View style={{ flex: 1, alignItems: "center" }}>
+  //   <TouchableOpacity
+  //     onPress={() => router.push("/roll")}
+  //     style={styles.circleRollButton}
+  //   >
+  //     <Ionicons name="dice" size={44} color="#fff" />
+  //   </TouchableOpacity>
+  // </View>
+  // </View>
   );
 }
 
@@ -230,7 +241,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
   },
   optionSelected: {
-    backgroundColor: "#f7d78c",
+    backgroundColor: "#ffd039",
   },
   optionDisabled: {
     backgroundColor: "#ddd",
@@ -247,7 +258,7 @@ const styles = StyleSheet.create({
     color: "gray",
   },
   rollButton: {
-    backgroundColor: "#afc3a8",
+    backgroundColor: "#78bb61",
     padding: 15,
     borderRadius: 10,
     marginTop: 20,

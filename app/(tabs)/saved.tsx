@@ -9,7 +9,7 @@ import {
   Image,
   Alert,
 } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSQLiteContext } from "expo-sqlite";
 
 export default function SavedOutfits() {
@@ -97,18 +97,18 @@ export default function SavedOutfits() {
     <View style={{ flex: 1 }}>
       <Stack.Screen options={{ title: "Saved Outfits" }} />
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={handleRandomRoll}
         style={{
-          backgroundColor: "#afc3a8",
+          backgroundColor: "#ffd039",
           padding: 15,
           borderRadius: 10,
           margin: 15,
           alignItems: "center",
         }}
       >
-        <Text style={{ color: "white", fontWeight: "bold" }}>Need Help Deciding?</Text>
-      </TouchableOpacity>
+        <Text style={{ color: "white", fontWeight: "900", }}>Roll!</Text>
+      </TouchableOpacity> */}
 
       <FlatList
         data={outfits}
@@ -116,7 +116,16 @@ export default function SavedOutfits() {
         contentContainerStyle={{ paddingBottom: 50 }}
         renderItem={({ item }) => (
           <View style={styles.outfitCard}>
-            <Text style={styles.outfitName}>{item.name}</Text>
+            {/* <Text style={styles.outfitName}>{item.name}</Text> */}
+
+            {/* Delete Button */}
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+              <Text style={styles.outfitName}>{item.name}</Text>
+              <TouchableOpacity onPress={() => handleDelete(item.id)}>
+                <Text style={{ color: "#ff5844", fontWeight: "bold" }}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+
             {/* {JSON.parse(item.items).map((piece, index) => (
               <Text key={index}>{piece.category}: {piece.name}</Text>
             ))} */}
@@ -125,7 +134,7 @@ export default function SavedOutfits() {
                 {piece.image && (
                   <Image
                     source={{ uri: piece.image }}
-                    style={{ width: 50, height: 50, borderRadius: 8, marginRight: 10 }}
+                    style={{ width: 100, height: 100, borderRadius: 8, marginRight: 10 }}
                     resizeMode="cover"
                   />
                 )}
@@ -133,25 +142,41 @@ export default function SavedOutfits() {
               </View>
             ))}
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => handleDelete(item.id)}
               style={styles.deleteButton}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>Delete</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         )}
       />
+
+    <View style={styles.bottomButtons}>
+      <View style={{ flex: 1, alignItems: "center" }}>
+        <TouchableOpacity
+          onPress={handleRandomRoll}
+          style={styles.circleRollButton}
+        >
+          <Ionicons name="dice" size={44} color="#fff" />
+        </TouchableOpacity>
+      </View>
+      </View>
+
     </View>
+
+  
+  
   );
 }
 
 const styles = StyleSheet.create({
   outfitCard: {
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#fff",
     padding: 15,
     margin: 10,
     borderRadius: 10,
+    marginBottom: 0
   },
   outfitName: {
     fontWeight: "bold",
@@ -165,5 +190,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     borderRadius: 6,
     alignSelf: "flex-start",
+  },
+  bottomButtons: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 10,
+  },
+  circleRollButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 50,
+    backgroundColor: "#ffd039",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+    position: 'absolute',
+    bottom: 1,
+    right: 1,
+    elevation: 4,
+  },
+  circleRollButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 14,
+    marginTop: 4,
   },
 });

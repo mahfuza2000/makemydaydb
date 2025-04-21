@@ -188,14 +188,14 @@ export default function TabSettings() {
           <View style={{ flexDirection: "row", gap: 10, marginTop: 30 }}>
             <TouchableOpacity
               onPress={() => setShowThresholds(false)}
-              style={[styles.button, { backgroundColor: "gray" }]}
+              style={[styles.button, { backgroundColor: "#ff5844" }]}
             >
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={saveThresholds}
-              style={[styles.button, { backgroundColor: "blue" }]}
+              style={[styles.button, { backgroundColor: "#6bb1e2" }]}
             >
               <Text style={styles.buttonText}>Save</Text>
             </TouchableOpacity>
