@@ -40,7 +40,7 @@ npm run reset-project
 ```
 This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-## APK Release
+## APK Release (v1.0.0)
 [Link Here](https://github.com/mahfuza2000/makemydaydb/releases/tag/v1.0.0)
 
 ## Learn more
