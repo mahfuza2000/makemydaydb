@@ -41,7 +41,7 @@ export default function TabSettings() {
   };
 
   const explainWeatherSetting = () => {
-    Alert.alert("What does 'Collect Current Weather' mean?", "When enabled, the app uses your current weather to suggest smarter outfits. For example, it will skip jackets if it's hot, or prioritize coats if it's cold.");
+    Alert.alert("What does 'Filter By Current Weather' mean?", "When enabled, the app uses your current weather to suggest smarter outfits. For example, it will skip jackets if it's hot, or prioritize coats if it's cold.");
   };
 
   const saveThresholds = async () => {
